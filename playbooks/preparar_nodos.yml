@@ -1,0 +1,49 @@
+---
+- name: Preparar nodos del laboratorio
+  hosts: nodos
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Refrescar catalogo de paquetes
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 1800
+
+    - name: Instalar utilidades del ejercicio
+      ansible.builtin.apt:
+        name:
+          - tree
+          - jq
+        state: present
+
+    - name: Crear cuenta de practica
+      ansible.builtin.user:
+        name: laboratorio
+        shell: /bin/bash
+        create_home: true
+        state: present
+
+    - name: Crear directorio de trabajo
+      ansible.builtin.file:
+        path: /srv/practica8
+        state: directory
+        owner: laboratorio
+        group: laboratorio
+        mode: '0750'
+
+    - name: Publicar identificacion del nodo
+      ansible.builtin.copy:
+        dest: /srv/practica8/estado.txt
+        content: "Nodo administrado: {{ inventory_hostname }}\nSistema: {{ ansible_distribution }} {{ ansible_distribution_version }}\n"
+        owner: laboratorio
+        group: laboratorio
+        mode: '0640'
+
+    - name: Habilitar un mensaje local para la practica
+      ansible.builtin.copy:
+        dest: /etc/motd
+        content: "Entorno gestionado por Ansible - {{ inventory_hostname }}\n"
+        owner: root
+        group: root
+        mode: '0644'
