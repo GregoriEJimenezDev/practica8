@@ -1,0 +1,24 @@
+services:
+  nodo-a:
+    build:
+      context: .
+    container_name: practica8-nodo-a
+    ports:
+      - "2231:22"
+    restart: unless-stopped
+
+  nodo-b:
+    build:
+      context: .
+    container_name: practica8-nodo-b
+    ports:
+      - "2232:22"
+    restart: unless-stopped
+
+  nodo-c:
+    build:
+      context: .
+    container_name: practica8-nodo-c
+    ports:
+      - "2233:22"
+    restart: unless-stopped
